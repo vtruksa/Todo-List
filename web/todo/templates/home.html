@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div id="header">TODO List</div>
+        <div id="task-list">
+            <ul>
+                <li>Task 1 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+                <li>Task 2 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+                <li>Task 3 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+                <li>Task 4 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+                <li>Task 5 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+                <li>Task 6 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+                <li>Task 7 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+            </ul>
+            <button id="prev-day">Yesterday's tasks</button>
+            Today
+            <button id="next-dat">Tommorow's tasks</button>
+        </div>
+        <button id="new-task">New task</button>
+        <hr>    
+        <form action="" method="post">
+            {% csrf_token %}
+            {{form.as_p}}
+            <!-- <label for="task-name">Name: </label><input type="text" name="task-name"><br>
+            <label for="task-desc">Description: </label><textarea name="task-desc"></textarea><br>
+            <label for="task-repeat">Repeat: </label>
+                <input type="radio" name="task-repeat" value="d">Daily
+                <input type="radio" name="task-repeat" value="w">Weekly
+                <input type="radio" name="task-repeat" value="bw">Bi-weekly
+                <input type="radio" name="task-repeat" value="m">Monthly<br>
+-->
+            <button id="add-task">Add</button> 
+        </form>
+    </div>
+{% endblock %}
