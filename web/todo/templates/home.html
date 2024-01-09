@@ -10,8 +10,8 @@
         </div>
         <div id="task-nav">
             <button id="prev-day" class="btn btn-light">Yesterday's tasks</button>
-            Today
-            <button id="next-dat" class="btn btn-light">Tommorow's tasks</button>
+            <span id="day-selected">Today</span>
+            <button id="next-day" class="btn btn-light">Tommorow's tasks</button>
             <br>
             <button id="new-task" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
                 Create a new task
@@ -22,15 +22,22 @@
     </div>
 
     <script>
+        date = null
+
         $(document).ready(function() {
-            console.log("called")
+            date = new Date()
+            date.setHours(12, 0, 0, 0)
+            btnSetup()
             loadTasks()
         })
 
-        function loadTasks(date=null) {
+        function loadTasks() {
+            iso_date = date.toISOString()
+            
             $.ajax({
                 url:'api/get-tasks',
                 method: 'GET',
+                data: {'date':iso_date},
                 dataType: 'json',
                 success: function(data) {
                     html = ""
@@ -45,6 +52,41 @@
                     console.log('Error')
                 }
             })
+        }
+
+        function btnSetup() {
+            $("#prev-day").click(function() {
+                date.setDate(date.getDate() - 1)
+                setDaySelected()
+                loadTasks()
+            })
+
+            $("#next-day").click(function() {
+                date.setDate(date.getDate() + 1)
+                setDaySelected()
+                loadTasks()
+            })
+        }
+
+        function setDaySelected() {
+            curr = new Date()
+            curr.setHours(12, 0, 0, 0)
+            
+            if(date.getTime() == curr.getTime()) {$('#day-selected').html(`Today`)}
+            // 86400000 is the number of miliseconds in 24 hours
+            else if(date.getTime() == (curr.getTime()-86400000)) {$('#day-selected').html(`Yesterday`)}
+            else if(date.getTime() == (curr.getTime()+86400000)) {$('#day-selected').html(`Tomorrow`)}
+            else {
+                day = date.getDate().toString().padStart(2, '0');
+
+                // Get current month in 3-letter shortcut
+                monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                month = monthNames[date.getMonth()];
+
+                // Get current year
+                year = date.getFullYear();
+                $('#day-selected').html(`${day}. ${month} ${year}`)
+            }
         }
     </script>
 

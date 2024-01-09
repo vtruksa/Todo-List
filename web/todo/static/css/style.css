@@ -59,4 +59,4 @@ input, textarea {
 }
 
 #form-repeat { display: flex; }
-#form-repeat div { margin: 10px;}
+#form-repeat div { margin: 15px; margin-left: 0px;}
