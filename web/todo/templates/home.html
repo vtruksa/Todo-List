@@ -4,33 +4,73 @@
     <div class="container">
         <div id="header">TODO List</div>
         <div id="task-list">
-            <ul>
-                <li>Task 1 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
-                <li>Task 2 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
-                <li>Task 3 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
-                <li>Task 4 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
-                <li>Task 5 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
-                <li>Task 6 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
-                <li>Task 7 <button class="done-task">Done</button><button class="del-task">Delete</button></li>
+            <ul id="list">
             </ul>
-            <button id="prev-day">Yesterday's tasks</button>
-            Today
-            <button id="next-dat">Tommorow's tasks</button>
+
         </div>
-        <button id="new-task">New task</button>
+        <div id="task-nav">
+            <button id="prev-day" class="btn btn-light">Yesterday's tasks</button>
+            Today
+            <button id="next-dat" class="btn btn-light">Tommorow's tasks</button>
+            <br>
+            <button id="new-task" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+                Create a new task
+            </button>
+        </div>
         <hr>    
-        <form action="" method="post">
-            {% csrf_token %}
-            {{form.as_p}}
-            <!-- <label for="task-name">Name: </label><input type="text" name="task-name"><br>
-            <label for="task-desc">Description: </label><textarea name="task-desc"></textarea><br>
-            <label for="task-repeat">Repeat: </label>
-                <input type="radio" name="task-repeat" value="d">Daily
-                <input type="radio" name="task-repeat" value="w">Weekly
-                <input type="radio" name="task-repeat" value="bw">Bi-weekly
-                <input type="radio" name="task-repeat" value="m">Monthly<br>
--->
-            <button id="add-task">Add</button> 
-        </form>
+        
     </div>
+
+    <script>
+        $(document).ready(function() {
+            console.log("called")
+            loadTasks()
+        })
+
+        function loadTasks(date=null) {
+            $.ajax({
+                url:'api/get-tasks',
+                method: 'GET',
+                dataType: 'json',
+                success: function(data) {
+                    html = ""
+
+                    data.forEach(element => {
+                        html += `<li><span class="task-name">${element.name}</span><button class="done-task btn btn-success">Done</button><button class="del-task btn btn-danger">Delete</button></li>`
+                    });
+
+                    $('#task-list #list').html(html)
+                },
+                error: function(error) {
+                    console.log('Error')
+                }
+            })
+        }
+    </script>
+
+<!--Modal-->
+<div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">New task</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form action="" method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    
+                    <div class="modal-footer">
+                        
+                        <button id="add-task" class="btn btn-primary">Add</button> 
+                        <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                        <!-- Additional buttons or actions can be added here -->
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}

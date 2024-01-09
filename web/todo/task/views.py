@@ -1,5 +1,5 @@
 from django.views.generic import TemplateView
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 
 from task.forms import TaskForm
@@ -32,4 +32,4 @@ class HomeView(TemplateView):
                 date=d,
             )
 
-            return render(request, self.template_name, {'form':TaskForm()})
+            return redirect('home')

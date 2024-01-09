@@ -1,0 +1,59 @@
+.container {
+    max-width: 60%;
+    margin: auto;
+    font-family: 'Open Sans', sans-serif;
+}
+
+#list {
+    list-style-type: none;
+}
+
+#task-list #list li {
+    display: grid;
+    grid-template-columns: 2fr 1fr 1fr;
+    border-bottom: 1px solid lightgray;
+}
+
+#task-list #list li button {
+    font-size: small;
+    padding: 5xp;
+}
+
+#task-list #list li span {
+    display: flex;
+    align-items: center;
+    padding: 5px;
+}
+
+#task-nav {
+    text-align: center;
+}
+
+#header {
+    text-align: center;
+    font-weight: bold;
+    font-size: 65px;
+}
+
+.btn {
+    margin: 5px;
+}
+
+.btn-light {
+    background-color: rgb(228, 228, 228);
+}
+
+.btn-light:hover {
+    background-color: rgb(211, 211, 211);
+}
+
+.modal-body p {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+}
+
+input, textarea {
+    border-radius: 5px;
+    border: 1px solid lightgray;
+    padding: 5px;
+}
