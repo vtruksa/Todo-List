@@ -60,12 +60,30 @@
                 <form action="" method="post">
                     {% csrf_token %}
                     {{ form.as_p }}
+
+                    <div id="form-repeat">
+                        <div><label>Repeat: </label></div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="repeat" id="rep-d">
+                            <label class="form-check-label" for="rep-d">Daily</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="repeat" id="rep-w">
+                            <label class="form-check-label" for="rep-d">Weekly</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="repeat" id="rep-bw">
+                            <label class="form-check-label" for="rep-d">Bi-weekly</label>
+                        </div>
+                        <div class="form-check">
+                            <input class="form-check-input" type="radio" name="repeat" id="rep-m">
+                            <label class="form-check-label" for="rep-d">Monthly</label>
+                        </div>
+                    </div>
                     
                     <div class="modal-footer">
-                        
                         <button id="add-task" class="btn btn-primary">Add</button> 
                         <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                        <!-- Additional buttons or actions can be added here -->
                     </div>
                 </form>
             </div>

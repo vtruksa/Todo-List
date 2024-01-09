@@ -57,3 +57,6 @@ input, textarea {
     border: 1px solid lightgray;
     padding: 5px;
 }
+
+#form-repeat { display: flex; }
+#form-repeat div { margin: 10px;}
