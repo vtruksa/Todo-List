@@ -26,5 +26,9 @@ urlpatterns = [
     path('api/', include('api.urls')),
 
     path("admin/", admin.site.urls),
-    path("", HomeView.as_view(), name="home")
-]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+    path("", HomeView.as_view(), name="home"),
+    path("logout/", logOut, name="logout"),
+    path("login/", LoginView.as_view(), name="login"),
+    path("register/", RegisterView.as_view(), name="register"),
+]

@@ -2,7 +2,7 @@
     max-width: 60%;
     margin: auto;
     font-family: 'Open Sans', sans-serif;
-    padding-top: 5%;
+    padding-top: 2%;
 }
 
 #list {
@@ -62,3 +62,17 @@ input, textarea {
 
 #form-repeat { display: flex; }
 #form-repeat div { margin: 15px; margin-left: 0px;}
+
+.form-container {
+    display: flex;
+    flex-direction: column; /* Align vertically in a column */
+    justify-content: center;
+    align-items: center;
+    height: 90vh;
+}
+
+.helptext {
+    display: block; 
+    color: gray; 
+    font-size: small;
+}

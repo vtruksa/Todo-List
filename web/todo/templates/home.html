@@ -1,6 +1,10 @@
 {% extends 'base.html' %}
 
 {% block content %}
+    {% if request.user.is_authenticated %}<a class="btn btn-outline-primary" href="{% url 'logout' %}">Logout</a>
+    {% else %}<a class="btn btn-outline-secondary" href="{% url 'login' %}">Login</a><a class="btn btn-outline-primary" href="{% url 'register' %}">Register</a>
+    {% endif %}
+
     <div class="container">
         <div id="header">TODO List</div>
         <div id="task-list">
