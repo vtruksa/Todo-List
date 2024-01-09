@@ -27,34 +27,7 @@
         $(document).ready(function() {
             date = new Date()
             date.setHours(12, 0, 0, 0)
-            btnSetup()
-            loadTasks()
-        })
 
-        function loadTasks() {
-            iso_date = date.toISOString()
-            
-            $.ajax({
-                url:'api/get-tasks',
-                method: 'GET',
-                data: {'date':iso_date},
-                dataType: 'json',
-                success: function(data) {
-                    html = ""
-
-                    data.forEach(element => {
-                        html += `<li><span class="task-name">${element.name}</span><button class="done-task btn btn-success">Done</button><button class="del-task btn btn-danger">Delete</button></li>`
-                    });
-
-                    $('#task-list #list').html(html)
-                },
-                error: function(error) {
-                    console.log('Error')
-                }
-            })
-        }
-
-        function btnSetup() {
             $("#prev-day").click(function() {
                 date.setDate(date.getDate() - 1)
                 setDaySelected()
@@ -65,6 +38,64 @@
                 date.setDate(date.getDate() + 1)
                 setDaySelected()
                 loadTasks()
+            })
+
+            loadTasks()
+        })
+
+        function loadTasks() {
+            iso_date = date.toISOString()
+
+            $.ajax({
+                url:'api/get-tasks',
+                method: 'GET',
+                data: {'date':iso_date},
+                success: function(data) {
+                    html = ""
+
+                    data.forEach(element => {
+                        done = ""
+                        btns = ""
+                        if(element.done == true) {done = "style='text-decoration: line-through'"}
+                        else {btns = `<button class="task-btn btn btn-success" id="btndon${element.id}">Done</button><button class="task-btn btn btn-danger" id="btndel${element.id}">Delete</button>`}
+                        html += `<li><span class="task-name" ${done}>${element.name}</span>${btns}</li>`
+                    });
+
+                    $('#task-list #list').html(html)
+                    btnSetup()
+                },
+                error: function(error) {
+                    console.log('Error')
+                }
+            })
+        }
+
+        function btnSetup() {
+            $(".task-btn").click(function() {
+                btn = $(this)
+                id = $(this).attr("id")
+                type = id.slice(3, 6)
+                id = Number(id.match(/\d+/g))
+                $.ajax({
+                    url:'api/task-btn',
+                    method: 'GET',
+                    data: {
+                        'id':id, 
+                        'type':type
+                    },
+                    success: function(data) {
+                        if(type === "del") { btn.parent().remove() }
+                        else {
+                            btn.attr("disabled", true)
+                            btn.prev().css("text-decoration", "line-through")
+                            btn.next().remove()
+                            btn.remove()
+                        }
+                    },
+                    error: function(error) {
+                        console.log("Error")
+                    }
+                })
             })
         }
 
