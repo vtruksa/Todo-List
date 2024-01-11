@@ -6,6 +6,7 @@ from django.http import HttpResponse
 
 from task.forms import TaskForm, RegisterForm
 from task.models import Task
+from todo.passwords import makePassword, checkPassword
 
 def logOut(request):
     logout(request)
