@@ -48,10 +48,21 @@ class LoginView(TemplateView):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
-        u = authenticate(request, username=username, password=password)
-        if u is not None: 
-            login(request, u)
-            return redirect('home')
+        try:
+            user = User.objects.get(username=username)
+            if checkPassword(password, user.password):
+                login(request, user)
+                return redirect('home')
+            else: 
+                print("Wrong password")
+                pass # TODO Wrong password
+        except: 
+            pass # TODO Wrong username
+
+        # u = authenticate(request, username=username, password=password)
+        # if u is not None: 
+        #     login(request, u)
+        #     return redirect('home')
         print(str(username) + ' ' + str(password))
         print("user " + str(u))
         return redirect('login')
@@ -77,10 +88,11 @@ class RegisterView(TemplateView):
                 email=form.cleaned_data['email'],
                 first_name=form.cleaned_data['first_name'],
                 last_name=form.cleaned_data['last_name'],
+                password=makePassword(form.cleaned_data['password']),
             )
 
-            u.set_password(form.cleaned_data['password'])
-            u.save()
+            # u.set_password(form.cleaned_data['password'])
+            # u.save()
 
             login(request, u)
             return redirect('home')
