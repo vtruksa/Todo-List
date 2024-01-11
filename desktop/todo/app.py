@@ -4,6 +4,8 @@ from tkinter import ttk
 import settings
 import sqlite3
 
+from passwords import checkPassword
+
 class App:
     def __init__(self, root):
         self.root = root
@@ -43,5 +45,11 @@ class App:
             WHERE username = '{u}'
         """)
 
-        print(self.db_cursor.fetchone())
-        win.destroy()
+        user = self.db_cursor.fetchone()
+
+        if checkPassword(p, user[2]):
+            self.user = user
+            win.destroy()
+        else:
+            win.destroy()
+            self.loginWin()
