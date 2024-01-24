@@ -10,10 +10,13 @@ import sqlite3
 from passwords import checkPassword
 
 class App:
+    global db_conn, db_cursor
+
     def __init__(self, root):
+        global db_conn, db_cursor
         self.root = root
-        self.db_conn = sqlite3.connect(settings.DB_PATH)
-        self.db_cursor = self.db_conn.cursor()
+        db_conn = sqlite3.connect(settings.DB_PATH)
+        db_cursor = db_conn.cursor()
         self.appLayout()
         self.loginWin()
 
@@ -42,24 +45,24 @@ class App:
         u = username.get()
         p = password.get()
 
-        self.db_cursor.execute(f"""
+        db_cursor.execute(f"""
             SELECT id, username, password
             FROM auth_user
             WHERE username = '{u}'
         """)
 
-        user = self.db_cursor.fetchone()
+        user = db_cursor.fetchone()
 
         if checkPassword(p, user[2]):
             self.user = user
             win.destroy()
 
-            self.db_cursor.execute(f"""
+            db_cursor.execute(f"""
                 SELECT id, name, description, date, done
                 FROM task_task
             """)
 
-            sql_tasks = self.db_cursor.fetchall()
+            sql_tasks = db_cursor.fetchall()
             self.tasks = []
             i=0
             for t in sql_tasks:
@@ -113,16 +116,8 @@ class App:
         new_name.grid(column=1, row=0)
         lab_new_date = self.lab_new_date = tk.Label(win, text="Date: ")
         lab_new_date.grid(column=0, row=1)
-        # new_date = self.new_date = Calendar(win)
-        # new_date.grid(column=1, row=1)
         today = date.today()
-        new_date = self.new_date = Calendar(
-            win,
-            selectmode = 'day',
-            # year = today.year,
-            # month = today.month,
-            # day = today.day
-        )
+        new_date = self.new_date = Calendar(win, selectmode = 'day')
         new_date.grid(column=1, row=1)
         lab_new_desc = self.lab_new_desc = tk.Label(win, text="Description: ")
         lab_new_desc.grid(column=0, row=2)
@@ -143,11 +138,11 @@ class App:
 
         desc = self.new_desc.get("1.0","end-1c")
 
-        self.db_cursor.execute(f"""
+        db_cursor.execute(f"""
             INSERT INTO task_task (name, description, user_id, date, done)
             VALUES ('{name}', '{desc}', 1, '{date}', 0)
         """)
-        self.db_conn.commit()
+        db_conn.commit()
 
         win.destroy()
 
@@ -164,22 +159,42 @@ class Task:
 
 
     def render(self):
-        self.label = tk.Label(self.frame, text=self.name, padx=10)
-        self.btn_done = tk.Button(self.frame, text="Done")
-        self.btn_del = tk.Button(self.frame, text="Delete")
+        if self.done == 0:
+            self.label = tk.Label(self.frame, text=self.name, padx=10)
+            self.btn_done = tk.Button(self.frame, text="Done", command=self.make_done)
+            self.btn_del = tk.Button(self.frame, text="Delete", command=self.delete)
 
-        self.widgets = [self.label, self.btn_done, self.btn_del]
+            self.widgets = [self.label, self.btn_done, self.btn_del]
+        else:
+            self.label = tk.Label(self.frame, text=self.name, padx=10, state="disabled")
+            self.widgets = [self.label]
+        
         i = 0
         for w in self.widgets:
             w.grid(column=i, row=self.row)
             i += 1
         
 
-    def destroy(self):
-        pass
+    def destroy(self): 
+        for w in self.widgets: w.destroy()
 
-    def done(self):
-        pass
+    def make_done(self):
+        global db_cursor
+        self.done = 1
+        db_cursor.execute(f"""
+            UPDATE task_task
+            SET done=1
+            WHERE id={self.id}
+        """)
+        self.destroy()
+        self.render()
 
     def delete(self):
-        pass
+        global db_cursor, db_conn
+        db_cursor.execute(f"""
+            DELETE FROM task_task
+            WHERE id={self.id}
+        """)
+        db_conn.commit()
+        self.destroy()
+        del self
