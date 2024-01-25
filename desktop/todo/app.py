@@ -64,7 +64,8 @@ class App:
 
             sql_tasks = db_cursor.fetchall()
             self.tasks = []
-            i=0
+            self.tasks_show = []
+            
             for t in sql_tasks:
                 self.tasks.append(Task(
                     id=t[0],
@@ -73,9 +74,9 @@ class App:
                     date=t[3],
                     done=t[4],
                     frame=self.frame_tasks,
-                    row=i,
                 ))
-                i+=1
+                if t[3] == str(date.today()): tasks_show.append(self.tasks[-1])
+                print(t[3])
         else:
             win.destroy()
             self.loginWin()
@@ -85,44 +86,37 @@ class App:
         frame_date.pack(side="left")
 
         # Time navigation
-        calendar = self.cal = Calendar(frame_date)
-        calendar.pack(side="top")
-        btn_day_prev = self.btn_day_prev = tk.Button(frame_date, text="Previous")
-        btn_day_prev.pack(side="left")
-        lab_day = self.lab_day = tk.Label(frame_date, text="Today")
-        lab_day.pack(side="left")
-        btn_day_next = self.btn_day_next = tk.Button(frame_date, text="Next")
-        btn_day_next.pack(side="left")
-        btn_add_task = self.btn_add_task = tk.Button(frame_date, text="Add a new task", command=self.new_task)
-        btn_add_task.pack()
+        self.cal = Calendar(frame_date, selectmode="day", date_pattern="yyyy-mm-dd")
+        self.cal.pack(side="top")
+        self.cal.bind("<<CalendarSelected>>", self.date_change)
 
         # Tasks frame
-        frame_tasks = self.frame_tasks = tk.Frame(self.root)
-        frame_tasks.pack(side="left")
-        # foreach task
-        # task = tk.Label(frame_tasks, text="This is a task", padx=10)
-        # task.grid(column=0, row=0)
-        # btn_done_task = tk.Button(frame_tasks, text="Done")
-        # btn_done_task.grid(column=1, row=0)
-        # btn_del_task = tk.Button(frame_tasks, text="Delete")
-        # btn_del_task.grid(column=2, row=0)
+        self.frame_tasks = tk.Frame(self.root)
+        self.frame_tasks.pack(side="left")
+
+    def date_change(self, event):
+        date = self.cal.get_date()
+        for t in self.tasks:
+            if t.date == date: t.render
+            else: t.destroy()
+        print(date)
 
     def new_task(self):
         win = tk.Toplevel(self.root)
 
-        lab_new_name = self.lab_new_name = tk.Label(win, text="Name: ")
-        lab_new_name.grid(column=0, row=0)
-        new_name = self.new_name = tk.Entry(win)
-        new_name.grid(column=1, row=0)
-        lab_new_date = self.lab_new_date = tk.Label(win, text="Date: ")
-        lab_new_date.grid(column=0, row=1)
+        self.lab_new_name = tk.Label(win, text="Name: ")
+        self.lab_new_name.grid(column=0, row=0)
+        self.new_name = tk.Entry(win)
+        self.new_name.grid(column=1, row=0)
+        self.lab_new_date = tk.Label(win, text="Date: ")
+        self.lab_new_date.grid(column=0, row=1)
         today = date.today()
-        new_date = self.new_date = Calendar(win, selectmode = 'day')
-        new_date.grid(column=1, row=1)
-        lab_new_desc = self.lab_new_desc = tk.Label(win, text="Description: ")
-        lab_new_desc.grid(column=0, row=2)
-        new_desc = self.new_desc = tk.Text(win, width=30, height=10)
-        new_desc.grid(column=1, row=2)  
+        self.new_date = Calendar(win, selectmode = 'day')
+        self.new_date.grid(column=1, row=1)
+        self.lab_new_desc = tk.Label(win, text="Description: ")
+        self.lab_new_desc.grid(column=0, row=2)
+        self.new_desc = tk.Text(win, width=30, height=10)
+        self.new_desc.grid(column=1, row=2)  
 
         btn_add = tk.Button(win, text="Add", command=lambda: self.add_task(win))
         btn_add.grid(columnspan=2, row=3)
@@ -147,18 +141,15 @@ class App:
         win.destroy()
 
 class Task:
-    def __init__(self, id, name, desc, date, done, frame, row, render=True):
+    def __init__(self, id, name, desc, date, done, frame):
         self.id = id
         self.name = name
         self.description = desc
         self.date = date
         self.done = done
         self.frame = frame
-        self.row = row
-        if render: self.render()
 
-
-    def render(self):
+    def render(self, row=0):
         if self.done == 0:
             self.label = tk.Label(self.frame, text=self.name, padx=10)
             self.btn_done = tk.Button(self.frame, text="Done", command=self.make_done)
@@ -171,7 +162,7 @@ class Task:
         
         i = 0
         for w in self.widgets:
-            w.grid(column=i, row=self.row)
+            w.grid(column=i, row=row)
             i += 1
         
 
