@@ -75,8 +75,11 @@ class App:
                     done=t[4],
                     frame=self.frame_tasks,
                 ))
-                if t[3] == str(date.today()): tasks_show.append(self.tasks[-1])
-                print(t[3])
+                if t[3] == str(date.today()): self.tasks_show.append(self.tasks[-1])
+
+            if len(self.tasks_show) > 0:
+                for i in range(0, len(self.tasks_show)): self.tasks_show[i].render(row=i)
+            else: pass # TODO Add a label informing the user about having no tasks for the selected day
         else:
             win.destroy()
             self.loginWin()
@@ -90,16 +93,24 @@ class App:
         self.cal.pack(side="top")
         self.cal.bind("<<CalendarSelected>>", self.date_change)
 
+        self.add_task_btn = tk.Button(frame_date, text="Add a new task", command=self.new_task)
+        self.add_task_btn.pack()
+
         # Tasks frame
         self.frame_tasks = tk.Frame(self.root)
         self.frame_tasks.pack(side="left")
 
     def date_change(self, event):
         date = self.cal.get_date()
+        for t in self.tasks_show: t.destroy()
+        self.tasks_show = []
+
+        i = 0
         for t in self.tasks:
-            if t.date == date: t.render
-            else: t.destroy()
-        print(date)
+            if t.date == date: 
+                self.tasks_show.append(t)
+                t.render(i)
+                i += 1
 
     def new_task(self):
         win = tk.Toplevel(self.root)
@@ -148,6 +159,7 @@ class Task:
         self.date = date
         self.done = done
         self.frame = frame
+        self.widgets = []
 
     def render(self, row=0):
         if self.done == 0:
